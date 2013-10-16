@@ -20,16 +20,28 @@ public class Main {
 		//fOperat.readFile();
 //		int test[] = {0,1,2,2,2,8};
 //		System.out.println(Arrays.toString(test));
-		Map<int[], Integer> entry = new HashMap<int[], Integer>();
-		int a1[] = {0,1,0,1,0};
-		int a2[] = {1,1,0,0,1};
-		entry.put(a1, 3);
-		entry.put(a2, 4);
-		for (Map.Entry ent : entry.entrySet()) {
-			int key[] = (int[])ent.getKey();
-            System.out.println("Key = " + key[0] + ", Value = " +
-                               ent.getValue());
-        }
+//		Map<int[], Integer> entry = new HashMap<int[], Integer>();
+//		int a1[] = {0,1,0,1,0};
+//		int a2[] = {1,1,0,0,1};
+//		entry.put(a1, 3);
+//		entry.put(a2, 4);
+//		for (Map.Entry ent : entry.entrySet()) {
+//			int key[] = (int[])ent.getKey();
+//            System.out.println("Key = " + key[0] + ", Value = " +
+//                               ent.getValue());
+//        }
+        Apriori test = new Apriori();
+        char a[] = new char[5];
+        Arrays.fill(a, '0');
+        a[1] = '1';
+        String str = String.valueOf(a);
+        System.out.println(str);
+        String val = "010010";
+        char[] charArray = val.toCharArray();
+		System.out.println(charArray[1]);
+//		int test[] = new int[10];
+//		System.out.println(Arrays.toString(test));
+		
 		
 	}
 

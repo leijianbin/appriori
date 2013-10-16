@@ -14,9 +14,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 /**
  * @author yzhao
  * input:  transaction database given by teacher
- * output: an ArrayList<int[]> type object. 
+ * output: an ArrayList<char[]> type object. 
  * each transaction should be transformed in a proper format.
- * for example, there is a transaction record T1: {I1,I3,I4}. T1 should be translated to [1,0,1,1,0]
+ * for example, there is a transaction record T1: {I1,I3,I4}. T1 should be translated to ['1','0','1','1','0']
  *
  */
 public class Excel {
@@ -33,6 +33,7 @@ public class Excel {
     	inputFile = input;
     	items = new HashSet<String>();
     }
+    
     
     public void writeFile(){
     	
