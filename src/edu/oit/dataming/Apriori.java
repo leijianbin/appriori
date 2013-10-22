@@ -12,6 +12,7 @@ public class Apriori {
     protected ArrayList<char[]> rawTransaction = new  ArrayList<char[]>();
     protected HashMap<char[], Integer> record = new HashMap<char[], Integer>();
     protected AssociationRules assR;
+    protected Excel excel = new Excel();
     public Apriori(){
     	rawTransaction = this._genTestData();
     	assR = new AssociationRules(this.min_sup, this.min_conf);
@@ -47,6 +48,7 @@ public class Apriori {
     			record.put(tmp, count);
     			}
     	}
+    	excel.writeFile(freq, "outputFiles/L1.xls");
     	return freq;
     }
     
@@ -54,9 +56,11 @@ public class Apriori {
     	HashMap<char[], Integer> output = this.getItemFrequency();
     	for (int i = 2 ; !output.isEmpty() ; i++){
     		output = this.aprioriGenerator(output.keySet(), i);
-    	    System.out.println("L"+(i-1)+":");
-    	    this.assR.generate(this.record, output, "outputFiles/AssociationRules-L"+(i-1)+".xls");
+    	    System.out.println("L"+(i)+":");
     	    this._printHashMap(output);
+    	    System.out.println("Writing AssociationRules-L"+(i)+".xls");
+    	    this.assR.generate(this.record, output, "outputFiles/AssociationRules-L"+(i)+".xls");
+    	    System.out.println("Wrote AssociationRules-L"+(i)+".xls successfully");
     	}
     }
     
@@ -93,6 +97,12 @@ public class Apriori {
     			}
     		}
     	}
+    	System.out.println("Writting C"+(k)+".xls");
+    	this.excel.writeFile(Cs, "outputFiles/C"+(k)+".xls");
+    	System.out.println("Wrote C"+(k)+".xls successfully");
+    	System.out.println("Writting L"+(k)+".xls");
+    	this.excel.writeFile(Ls, "outputFiles/L"+(k)+".xls");
+    	System.out.println("Wrote L"+(k)+".xls successfully");
     	return Ls;
     }
     
