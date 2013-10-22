@@ -2,9 +2,15 @@ package edu.oit.dataming;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -21,66 +27,111 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 public class Excel {
     protected String inputFile;
-    protected String outputFile;
-    //protected ArrayList<String> items;
-    protected HashSet <String> items;
+    //protected HashSet<String> items;
     public Excel(){
-    	inputFile = "/Users/yzhao/dataMining/TransactionDatabase.xlsx";
-    	items =  new HashSet<String>();
+    	inputFile = "inputFiles/TransactionDatabase.xlsx";
     }
     
     public Excel(String input){
     	inputFile = input;
-    	items = new HashSet<String>();
     }
     
     
-    public void writeFile(){
+    public void writeFile(Map map){
     	
     }
-    
-    public void readFile() throws IOException{
+
+    /**@author zhenqing
+     * read everyline, put each line in a key-value pair
+     * using TreeMap so that the key will be sorted
+     * @return
+     * @throws IOException
+     * data.put("T1","I1,I2,I5");
+		 data.put("T2", "I2,I4");
+		 data.put("T3", "I2, I3");
+		 data.put("T4", "I1, I2, I4");
+		 data.put("T5", "I1, I3");
+     */
+    public TreeMap<String,String> readFile() throws IOException{
+    	TreeMap<String,String> data = new TreeMap<String,String>();
     	try{
     		FileInputStream file = new FileInputStream(new File(this.inputFile));
-	        XSSFWorkbook workbook = new XSSFWorkbook(file);
-	        XSSFSheet sheet = workbook.getSheetAt(0);
-	        Iterator <Row> rowIterator = sheet.iterator();
-	        Double cellData_D;
-	        String cellData_S;
-	        while (rowIterator.hasNext()){
-		    	Row row = rowIterator.next();
-		    	Iterator<Cell> cellIterator = row.cellIterator();
-		        while(cellIterator.hasNext()) {
-		            Cell cell = cellIterator.next();
-		            cellData_D = null;
-		            cellData_S = null;
-		            switch(cell.getCellType()) {
-		                case Cell.CELL_TYPE_NUMERIC:
-		                	//items.add(cell.getNumericCellValue());
-		                	cellData_D = cell.getNumericCellValue() ;
-		                	items.add(cellData_D.toString());
-		                    //System.out.print(cell.getNumericCellValue() + "\t\t");
-		                    break;
-		                case Cell.CELL_TYPE_STRING:
-		                	cellData_S = cell.getStringCellValue();
-		                	String[] singleTransaction = cellData_S.split(",");
-		                	for (String tmp: singleTransaction){
-		                		this.items.add(tmp.trim());
-		                	}
-		                    //System.out.print(cell.getStringCellValue() + "\t\t");
-		                    break;
-		            }
-		        }
-		        System.out.println("");
-		    }
-	        System.out.println(items);
-//	        for (String s: items){
-//	        	System.out.println(s);
-//	        }
-    	}catch (Exception e){
-    		e.printStackTrace();
-    	}
+    		XSSFWorkbook workbook = new XSSFWorkbook(file);
+    		XSSFSheet sheet = workbook.getSheetAt(0);
+    		Iterator <Row> rowIterator = sheet.iterator();
+    		
+ 	        String tid;
+ 	        String itemlist;
+ 	        rowIterator.next();
+ 	        while (rowIterator.hasNext()){
+ 		    	Row row = rowIterator.next();
+ 		    	tid = row.getCell(0).getStringCellValue();
+ 		    	itemlist = row.getCell(1).getStringCellValue();
+ 		    	data.put(tid, itemlist);	
+ 		    }
+     	}catch (FileNotFoundException e) {
+     	    e.printStackTrace();
+     	} catch (IOException e) {
+     	    e.printStackTrace();
+     	}
+    	return data;
     }
+    /**
+     * @author zhenqing
+     * get the distinct items
+     * using TreeSet so the values are distinct and sorted
+     * I1,I2,I3,I4,I5
+     * @param data
+     * @return
+     */
+    public TreeSet<String> getItems(TreeMap data){
+    	TreeSet<String> items = new TreeSet<String>();
+    	Collection<String> values = data.values();
+    	
+		 for(String value:values){
+			 value = value.replace(" ", "");
+			 String[] tmp = value.split(",");
+			 for(int i=0;i<tmp.length;i++){
+				 items.add(tmp[i]);
+			 }
+		 }
+		 return items;
+    }
+    /**
+     * @author zhenqing
+     * return the matrix 0 1 0 1 for each candidate
+     * the format is {[0,1,1,0,0],[1,0,1,1,0]...}
+     * @param data
+     * @return
+     */
+    public ArrayList<char[]> getMatrix(TreeMap data){
+    	ArrayList<char[]> matrix = new ArrayList<char[]>();
+		 TreeSet<String> items = getItems(data);
+		 System.out.println(items.toString());
+		 
+		 Iterator iterator = data.entrySet().iterator();
+		 while(iterator.hasNext()){
+			 Map.Entry entry=(Map.Entry)iterator.next();
+			 String key = (String)entry.getKey();
+			 String value =(String) entry.getValue();
+			 ArrayList t = new ArrayList();
+			char[] tt = new char[items.size()];
+			Iterator i = items.iterator();
+			int m=0;
+			while(i.hasNext()){
+				if(value.indexOf((String)i.next())==-1){
+					tt[m]= '0';
+				}else{
+					tt[m]= '1';
+				}
+				m++;
+			}
+			 matrix.add(tt);
+		 }
+		 return matrix;
+    }
+    
+
     
 }
 

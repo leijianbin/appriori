@@ -8,20 +8,25 @@ import java.util.Set;
 
 public class Apriori {
 	protected int min_sup = 2;
+	protected int min_conf = 25;
     protected ArrayList<char[]> rawTransaction = new  ArrayList<char[]>();
     protected HashMap<char[], Integer> record = new HashMap<char[], Integer>();
-    
+    protected AssociationRules assR;
     public Apriori(){
     	rawTransaction = this._genTestData();
+    	assR = new AssociationRules(this.min_sup, this.min_conf);
     } 
     
     public Apriori(ArrayList<char[]> trans){
     	rawTransaction = trans;
+    	assR = new AssociationRules(this.min_sup, this.min_conf);
     }
     
-    public Apriori(ArrayList<char[]> trans, int min_sup){
+    public Apriori(ArrayList<char[]> trans, int min_sup, int min_conf){
     	rawTransaction = trans;
     	this.min_sup = min_sup;
+    	this.min_conf = min_conf;
+    	assR = new AssociationRules(this.min_sup, this.min_conf);
     }
 /**    
  * This function has the same function as find_frequent_1-itemsets on page 239
@@ -50,6 +55,7 @@ public class Apriori {
     	for (int i = 2 ; !output.isEmpty() ; i++){
     		output = this.aprioriGenerator(output.keySet(), i);
     	    System.out.println("L"+(i-1)+":");
+    	    this.assR.generate(this.record, output, "outputFiles/AssociationRules-L"+(i-1)+".xls");
     	    this._printHashMap(output);
     	}
     }
@@ -81,7 +87,6 @@ public class Apriori {
     				Cs.put(result.toCharArray(), support);
     				if (support >= this.min_sup && !output.contains(result)){
     					output.add(result);
-    					//System.out.println(result);
     					Ls.put(result.toCharArray(), support);
     					record.put(result.toCharArray(), support);
     				}
